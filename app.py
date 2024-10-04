@@ -11,14 +11,11 @@ import torch.nn as nn
 import torch.optim as optim
 from jiwer import wer
 from sentence_transformers import SentenceTransformer
-import logging
 import numpy as np
 import nltk
 from nltk.corpus import cmudict
-from pydub.exceptions import CouldntDecodeError
 from difflib import SequenceMatcher
 import json
-import base64
 from flask_migrate import Migrate
 load_dotenv()
 migrate = Migrate()
@@ -280,12 +277,12 @@ def create_voice_exercise_history():
                 return jsonify({'error': 'student_id and voice_exercises_id are required'}), 400
             
             with open(wav_path, "rb") as audio_file:
-                audio_base64 = base64.b64encode(audio_file.read()).decode('utf-8')
+                audio_data = audio_file.read()
 
             # Save the data to the database
             new_history = VoiceExcercisesHistory(
                 voice=recognized_text,
-                voiceRecord=audio_base64,
+                voiceRecord=audio_data,
                 voiceImage=voice_image,
                 recognizedText=recognized_text,
                 accuracyScore=str(accuracy_score),
